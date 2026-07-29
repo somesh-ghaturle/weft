@@ -27,8 +27,10 @@ export interface Span {
   attributes_json: string;
 }
 
+const BACKEND_URL = process.env.WEFT_BACKEND_URL ?? "http://127.0.0.1:8000";
+
 async function backendFetch<T>(path: string): Promise<T> {
-  const res = await fetch(`/backend${path}`, { cache: "no-store" });
+  const res = await fetch(`${BACKEND_URL}${path}`, { cache: "no-store" });
   if (!res.ok) {
     throw new Error(`weft backend request failed: ${res.status} ${path}`);
   }

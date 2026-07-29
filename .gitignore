@@ -1,0 +1,16 @@
+.DS_Store
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+
+# Backend local data (Parquet spans, SQLite metadata)
+backend/data/
+
+# Node / Next.js
+frontend/node_modules/
+frontend/.next/
+frontend/next-env.d.ts
+frontend/tsconfig.tsbuildinfo
