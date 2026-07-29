@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+opentelemetry-proto
+duckdb
+pyarrow
+pydantic
+python-multipart
+sqlalchemy

@@ -1,0 +1,6 @@
+Metadata-Version: 2.4
+Name: weft
+Version: 0.1.0
+Summary: Minimal Python SDK for emitting OTLP GenAI spans to a Weft-compatible collector.
+Requires-Python: >=3.10
+Requires-Dist: opentelemetry-proto

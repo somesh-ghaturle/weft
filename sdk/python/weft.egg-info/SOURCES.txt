@@ -1,0 +1,10 @@
+pyproject.toml
+weft/__init__.py
+weft/exporter.py
+weft/span.py
+weft/tracer.py
+weft.egg-info/PKG-INFO
+weft.egg-info/SOURCES.txt
+weft.egg-info/dependency_links.txt
+weft.egg-info/requires.txt
+weft.egg-info/top_level.txt
