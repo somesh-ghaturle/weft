@@ -8,6 +8,9 @@ from pathlib import Path
 
 from fastapi import FastAPI
 
+from app.api.datasets import build_router as build_datasets_router
+from app.api.eval_runs import router as eval_runs_router
+from app.api.prompts import router as prompts_router
 from app.api.traces import build_router as build_traces_router
 from app.ingestion.otlp import build_router as build_otlp_router
 from app.metadata.db import init_db
@@ -38,3 +41,6 @@ async def healthz() -> dict[str, str]:
 
 app.include_router(build_otlp_router(writer))
 app.include_router(build_traces_router(DATA_DIR))
+app.include_router(prompts_router)
+app.include_router(build_datasets_router(DATA_DIR))
+app.include_router(eval_runs_router)
