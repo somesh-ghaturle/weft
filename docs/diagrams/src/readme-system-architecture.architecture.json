@@ -1,0 +1,314 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Weft System Architecture",
+    "quality_profile": "showcase",
+    "animation": "trace",
+    "views": [
+      {
+        "id": "ingest",
+        "label": "Ingest path",
+        "focus": [
+          "clients",
+          "otlp",
+          "writer",
+          "parquet"
+        ],
+        "note": "Any OTel SDK posts OTLP; a single writer thread batches spans into Parquet files."
+      },
+      {
+        "id": "read",
+        "label": "Read path",
+        "focus": [
+          "parquet",
+          "query",
+          "traces",
+          "ui",
+          "datasets"
+        ],
+        "note": "DuckDB reads Parquet in-process to serve the trace list, waterfall, and dataset snapshots."
+      },
+      {
+        "id": "metadata",
+        "label": "Metadata",
+        "focus": [
+          "prompts",
+          "evals",
+          "datasets",
+          "metadb"
+        ],
+        "note": "Prompts, datasets, and eval runs live in SQLite by default, or Postgres via WEFT_METADATA_DATABASE_URL."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "clients",
+      "type": "external",
+      "label": "OTel Clients",
+      "sublabel": "Weft SDK \u00b7 Collector",
+      "pos": [
+        40,
+        160
+      ],
+      "size": [
+        140,
+        56
+      ]
+    },
+    {
+      "id": "otlp",
+      "type": "backend",
+      "label": "OTLP Ingest",
+      "sublabel": "POST /v1/traces",
+      "pos": [
+        250,
+        160
+      ],
+      "size": [
+        140,
+        56
+      ]
+    },
+    {
+      "id": "writer",
+      "type": "backend",
+      "label": "Span Writer",
+      "sublabel": "background thread",
+      "pos": [
+        460,
+        160
+      ],
+      "size": [
+        140,
+        56
+      ]
+    },
+    {
+      "id": "parquet",
+      "type": "database",
+      "label": "Parquet Files",
+      "sublabel": "WEFT_DATA_DIR",
+      "pos": [
+        670,
+        160
+      ],
+      "size": [
+        140,
+        56
+      ]
+    },
+    {
+      "id": "query",
+      "type": "backend",
+      "label": "DuckDB Query",
+      "sublabel": "read_parquet",
+      "pos": [
+        880,
+        160
+      ],
+      "size": [
+        140,
+        56
+      ]
+    },
+    {
+      "id": "traces",
+      "type": "backend",
+      "label": "Traces API",
+      "sublabel": "GET /traces",
+      "pos": [
+        1090,
+        160
+      ],
+      "size": [
+        140,
+        56
+      ]
+    },
+    {
+      "id": "ui",
+      "type": "frontend",
+      "label": "Next.js UI",
+      "sublabel": "list \u00b7 waterfall",
+      "pos": [
+        1090,
+        330
+      ],
+      "size": [
+        140,
+        56
+      ]
+    },
+    {
+      "id": "datasets",
+      "type": "backend",
+      "label": "Datasets API",
+      "sublabel": "/datasets",
+      "pos": [
+        880,
+        330
+      ],
+      "size": [
+        140,
+        56
+      ]
+    },
+    {
+      "id": "evals",
+      "type": "backend",
+      "label": "Eval Runs API",
+      "sublabel": "/eval-runs",
+      "pos": [
+        670,
+        330
+      ],
+      "size": [
+        140,
+        56
+      ]
+    },
+    {
+      "id": "prompts",
+      "type": "backend",
+      "label": "Prompts API",
+      "sublabel": "/prompts",
+      "pos": [
+        460,
+        330
+      ],
+      "size": [
+        140,
+        56
+      ]
+    },
+    {
+      "id": "metadb",
+      "type": "database",
+      "label": "Metadata DB",
+      "sublabel": "SQLite / Postgres",
+      "pos": [
+        670,
+        480
+      ],
+      "size": [
+        140,
+        56
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Weft backend \u00b7 FastAPI",
+      "wraps": [
+        "otlp",
+        "writer",
+        "parquet",
+        "query",
+        "traces",
+        "datasets",
+        "evals",
+        "prompts",
+        "metadb"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "ingest",
+      "from": "clients",
+      "to": "otlp",
+      "label": "OTLP protobuf",
+      "variant": "emphasis"
+    },
+    {
+      "id": "enqueue",
+      "from": "otlp",
+      "to": "writer",
+      "label": "enqueue"
+    },
+    {
+      "id": "flush",
+      "from": "writer",
+      "to": "parquet",
+      "label": "batch write"
+    },
+    {
+      "id": "scan",
+      "from": "parquet",
+      "to": "query",
+      "label": "scan"
+    },
+    {
+      "id": "serve",
+      "from": "query",
+      "to": "traces",
+      "label": "spans"
+    },
+    {
+      "id": "browse",
+      "from": "ui",
+      "to": "traces",
+      "label": "GET /traces"
+    },
+    {
+      "id": "source-trace",
+      "from": "query",
+      "to": "datasets",
+      "label": "source trace",
+      "labelAt": [
+        950,
+        273
+      ]
+    },
+    {
+      "id": "prompts-meta",
+      "from": "prompts",
+      "to": "metadb",
+      "variant": "dashed"
+    },
+    {
+      "id": "evals-meta",
+      "from": "evals",
+      "to": "metadb",
+      "variant": "dashed"
+    },
+    {
+      "id": "datasets-meta",
+      "from": "datasets",
+      "to": "metadb",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Ingest path",
+      "items": [
+        "OTLP/HTTP only \u2014 any OTel SDK works",
+        "Single writer thread batches spans to Parquet",
+        "No DuckDB write contention"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Read path",
+      "items": [
+        "DuckDB reads Parquet in-process",
+        "Datasets can snapshot a stored trace",
+        "UI renders trace list and waterfall"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Metadata",
+      "items": [
+        "Prompts, labels, datasets, eval runs",
+        "SQLAlchemy over SQLite by default",
+        "WEFT_METADATA_DATABASE_URL for Postgres"
+      ]
+    }
+  ]
+}

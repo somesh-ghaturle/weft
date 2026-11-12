@@ -10,6 +10,11 @@ Weft is a lightweight alternative to Langfuse, Phoenix, and OpenObserve for team
 
 ## System Architecture
 
+![Weft system architecture](docs/diagrams/gif/readme-system-architecture.gif)
+
+<details>
+<summary>Mermaid source (kept for diff history)</summary>
+
 ```mermaid
 graph TB
     subgraph "Client Applications"
@@ -67,6 +72,10 @@ graph TB
     G -.->|"Data"| P
     K -.->|"Data"| Q
 ```
+
+</details>
+
+Interactive version (pan/zoom, search, guided views): [docs/diagrams/readme-system-architecture.html](docs/diagrams/readme-system-architecture.html). Source of truth: [docs/diagrams/src/readme-system-architecture.architecture.json](docs/diagrams/src/readme-system-architecture.architecture.json).
 
 ### Key Components
 
